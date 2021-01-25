@@ -1,0 +1,22 @@
+N: 3
+altitude: [0.0,0.0,0.0]
+fuel: [0.0,0.0,0.0]
+temp: [0.0,0.0,0.0]
+technical_sensor: [false,false,false]
+bat: [0.0,0.0,0.0]
+drone_number_counter: 0
+drone_synchronisation_counter: 0
+drone_synchronisation_counter2: 0
+serving_drone_counter: 0
+time: [0.0,0.0,0.0]
+request: 0
+serve: 0
+request_from_building: 0
+start: 0
+x: [1,2, 3]
+y: [2, 4, 5]
+dist: [0.0,0.0,0.0]
+update_dist: [0.0,0.0,0.0]
+shortest_distance: [0.0,0.0,0.0]
+chosen: [0.0,0.0,0.0]
+selected_drone: [0.0,0.0,0.0]
