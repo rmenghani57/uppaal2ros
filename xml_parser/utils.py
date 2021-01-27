@@ -42,6 +42,7 @@ def extract_templates(filename):
             # append [target, [labels]] to the key 'source' in the adjacency list inside the template object
             template.add_directed_edge(source, target, labels)
 
+        template.declarations = template_declarations
         # Storing each of the templates / graphs in a dictionary, where the template's name is the key
         templates[template_name] = template
     return templates
