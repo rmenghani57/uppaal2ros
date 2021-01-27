@@ -56,6 +56,8 @@ def extract_text(filename, tag_name):
     return text
 
 def generate_ros_params(global_params):
+
+    # Create folder structure to store ros params file
     path = "src/control/global_params/"
     try:
         os.makedirs(path)
@@ -81,7 +83,6 @@ def generate_ros_params(global_params):
             processed_parts[-1] = processed_parts[-1][:-1]
 
             if "chan" in processed_parts:
-                # f.write(processed_parts[-1] + ": 0\n")
                 yaml_dict[processed_parts[-1]] = 0
             
             # storing variables with assigned values so that they can be accessed when
@@ -93,14 +94,13 @@ def generate_ros_params(global_params):
                         right = " ".join(processed_parts[idx+1:])
                         processed_right = right.replace("{", "[")
                         processed_right = processed_right.replace("}", "]")
-                        # print(left, right, processed_right)
+                        # to check if the we are dealing with an array or normal variable
                         if right != processed_right:
                             left = left.split("[")[0]
                         else:
                             processed_right = int(processed_right)
                         yaml_dict[left] = processed_right
                         assigned_lookup[left] = processed_right
-                        # f.write(left + ": " + processed_right + "\n")
             else:
                 # Checking if the current declaration is an Array
                 isArray = False
@@ -171,6 +171,9 @@ def generate_ros_launch(system_declarations):
 
     # Construct XML tree from nodes extracted from system declaration file
     ros_tree = ET.Element("launch")
+
+    load_yaml = ET.SubElement(ros_tree, "rosparam", attrib={"command":"load", "file":"$(find control)/global_params/params.yaml"})
+
     for node in nodes:
         if nodes_seen[node["type"]] > 0:
             ros_group = ET.SubElement(ros_tree, "group")
