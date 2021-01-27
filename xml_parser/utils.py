@@ -1,6 +1,7 @@
 import xml.etree.ElementTree as ET
 from custom_graph_objects import Node, Template
 import lxml.etree as etree
+import yaml
 import os
 
 def extract_templates(filename):
@@ -63,69 +64,73 @@ def generate_ros_params(global_params):
     else:
         print("Successfully Created ROS Global Parameters Directory Structure\n Proceeding with ROS Global Parameters File Generation...")
 
-    with open(path + "params.yaml", "w") as f:
-        assigned_lookup = dict()
-        lines = global_params.split("\n")
-        for line in lines:
-            line = line.strip()
-            if(not line.startswith("//") and len(line)):
-                parts = [x.strip() for x in line.split(" ")]
-                processed_parts = parts
-                for idx, part in enumerate(parts):
-                    if part == "//" or part.startswith("//"):
-                        processed_parts = parts[:idx]
-                        break
-                # Remove semi-colons
-                processed_parts[-1] = processed_parts[-1][:-1]
+    
+    assigned_lookup = dict()
+    lines = [line.strip() for line in global_params.split("\n")]
+    yaml_dict = dict()
 
-                if "chan" in processed_parts:
-                    f.write(processed_parts[-1] + ": 0\n")
-                # storing variables with assigned values so that they can be accessed when
-                # translating other lines (like using N to initialize an array to all 0s)
-                elif "=" in processed_parts:
-                    for idx, part in enumerate(processed_parts):
-                        if part == "=":
-                            left = processed_parts[idx - 1]
-                            right = " ".join(processed_parts[idx+1:])
-                            processed_right = right.replace("{", "[")
-                            processed_right = processed_right.replace("}", "]")
-                            if right != processed_right:
-                                left = left.split("[")[0]
-                            assigned_lookup[left] = processed_right
-                            f.write(left + ": " + processed_right + "\n")
-                else:
-                    # Checking if the current declaration is an Array
-                    isArray = False
-                    for idx, part in enumerate(processed_parts):
-                        if "[" in part:
-                            isArray = True
-                            part_type = processed_parts[idx - 1]
-                            part_name = part.split("[")[0]
-                            # To check if the length is a variable or a concrete value
-                            try:
-                                length = int(assigned_lookup[part.split("[")[1].split("]")[0]])
-                            except:
-                                length = int(part.split("[")[1].split("]")[0])
-                            processed_line = part_name + ": [" 
-                            for i in range(length):
-                                if part_type == "int":
-                                    processed_line += "0"
-                                elif part_type == "bool":
-                                    processed_line += "false"
-                                
-                                if i != length - 1:
-                                    processed_line += ","
-                            processed_line += "]"
-                            f.write(processed_line + "\n")
-                    # This leaves us with the last case of an uninitialized variable
-                    if(not isArray):
-                        part_type = processed_parts[0]
-                        processed_line = processed_parts[1] + ": "
+    for line in lines:
+        if(not line.startswith("//") and len(line)):
+            parts = [x.strip() for x in line.split(" ")]
+            processed_parts = parts
+            for idx, part in enumerate(parts):
+                if part == "//" or part.startswith("//"):
+                    processed_parts = parts[:idx]
+                    break
+            # Remove semi-colons
+            processed_parts[-1] = processed_parts[-1][:-1]
+
+            if "chan" in processed_parts:
+                # f.write(processed_parts[-1] + ": 0\n")
+                yaml_dict[processed_parts[-1]] = 0
+            
+            # storing variables with assigned values so that they can be accessed when
+            # translating other lines (like using N to initialize an array to all 0s)
+            elif "=" in processed_parts:
+                for idx, part in enumerate(processed_parts):
+                    if part == "=":
+                        left = processed_parts[idx - 1]
+                        right = " ".join(processed_parts[idx+1:])
+                        processed_right = right.replace("{", "[")
+                        processed_right = processed_right.replace("}", "]")
+                        # print(left, right, processed_right)
+                        if right != processed_right:
+                            left = left.split("[")[0]
+                        else:
+                            processed_right = int(processed_right)
+                        yaml_dict[left] = processed_right
+                        assigned_lookup[left] = processed_right
+                        # f.write(left + ": " + processed_right + "\n")
+            else:
+                # Checking if the current declaration is an Array
+                isArray = False
+                for idx, part in enumerate(processed_parts):
+                    if "[" in part:
+                        isArray = True
+                        part_type = processed_parts[idx - 1]
+                        part_name = part.split("[")[0]
+                        # To check if the length is a variable or a concrete value
+                        try:
+                            length = int(assigned_lookup[part.split("[")[1].split("]")[0]])
+                        except:
+                            length = int(part.split("[")[1].split("]")[0])
+                        
                         if part_type == "int":
-                            processed_line += "0"
+                            yaml_dict[part_name] = [0 for x in range(length)]
                         elif part_type == "bool":
-                            processed_line += "false"
-                        f.write(processed_line + "\n")
+                            yaml_dict[part_name] = [False for x in range(length)]
+
+                # This leaves us with the last case of an uninitialized variable
+                if(not isArray):
+                    part_type = processed_parts[0]
+                    part_name = processed_parts[1]
+                    if part_type == "int":
+                        yaml_dict[part_name] = 0
+                    elif part_type == "bool":
+                        yaml_dict[part_name] = [False]
+
+        with open(path + "params.yaml", "w") as f:
+            f.write(yaml.dump(yaml_dict, default_flow_style=None))
 
 def generate_ros_launch(system_declarations):
 
