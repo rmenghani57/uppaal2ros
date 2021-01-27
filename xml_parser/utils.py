@@ -70,7 +70,7 @@ def generate_ros_params(global_params):
 
                 if "chan" in processed_parts:
                     f.write(processed_parts[-1] + ": 0\n")
-                    print(processed_parts[-1] + ": 0")
+                    # print(processed_parts[-1] + ": 0")
                 # storing variables with assigned values so that they can be accessed when
                 # translating other lines (like using N to initialize an array to all 0s)
                 elif "=" in processed_parts:
@@ -84,17 +84,19 @@ def generate_ros_params(global_params):
                                 left = left.split("[")[0]
                             assigned_lookup[left] = processed_right
                             f.write(left + ": " + processed_right + "\n")
-                            print(left + ": " + processed_right)
+                            # print(left + ": " + processed_right)
                 else:
+                    isArray = False
                     for idx, part in enumerate(processed_parts):
                         if "[" in part:
+                            isArray = True
                             part_type = processed_parts[idx - 1]
                             part_name = part.split("[")[0]
                             length = int(assigned_lookup[part.split("[")[1].split("]")[0]])
                             processed_line = part_name + ": [" 
                             for i in range(length):
                                 if part_type == "int":
-                                    processed_line += "0.0"
+                                    processed_line += "0"
                                 elif part_type == "bool":
                                     processed_line += "false"
                                 
@@ -102,4 +104,13 @@ def generate_ros_params(global_params):
                                     processed_line += ","
                             processed_line += "]"
                             f.write(processed_line + "\n")
-                            print(processed_line)
+                            # print(processed_line)
+                    if(not isArray):
+                        part_type = processed_parts[0]
+                        processed_line = processed_parts[1] + ": "
+                        if part_type == "int":
+                            processed_line += "0"
+                        elif part_type == "bool":
+                            processed_line += "false"
+                        f.write(processed_line + "\n")
+                            # print(part, part_type)
