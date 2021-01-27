@@ -91,8 +91,12 @@ def generate_ros_params(global_params):
                             isArray = True
                             part_type = processed_parts[idx - 1]
                             part_name = part.split("[")[0]
-                            length = int(assigned_lookup[part.split("[")[1].split("]")[0]])
-                            processed_line = part_name + ": ["
+                            # To check if the length is a variable or a concrete value
+                            try:
+                                length = int(assigned_lookup[part.split("[")[1].split("]")[0]])
+                            except:
+                                length = int(part.split("[")[1].split("]")[0])
+                            processed_line = part_name + ": [" 
                             for i in range(length):
                                 if part_type == "int":
                                     processed_line += "0"
