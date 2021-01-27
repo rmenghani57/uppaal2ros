@@ -18,4 +18,5 @@ if __name__ == '__main__':
     # print(system_declarations)
 
     utils.generate_ros_params(global_params)
+    utils.generate_ros_launch(system_declarations)
     # print(assigned_lookup)

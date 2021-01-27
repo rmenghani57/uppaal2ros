@@ -1,5 +1,7 @@
 import xml.etree.ElementTree as ET
 from custom_graph_objects import Node, Template
+import lxml.etree as etree
+import os
 
 def extract_templates(filename):
     tree = ET.parse(filename)
@@ -53,7 +55,15 @@ def extract_text(filename, tag_name):
     return text
 
 def generate_ros_params(global_params):
-    with open("params.yaml", "w") as f:
+    path = "src/control/global_params/"
+    try:
+        os.makedirs(path)
+    except OSError:
+        print("Creation of ROS Global Parameters File in {0} has failed".format(path))
+    else:
+        print("Successfully Created ROS Global Parameters Directory Structure\n Proceeding with ROS Global Parameters File Generation...")
+
+    with open(path + "params.yaml", "w") as f:
         assigned_lookup = dict()
         lines = global_params.split("\n")
         for line in lines:
@@ -116,3 +126,62 @@ def generate_ros_params(global_params):
                         elif part_type == "bool":
                             processed_line += "false"
                         f.write(processed_line + "\n")
+
+def generate_ros_launch(system_declarations):
+
+    # Cleaning up comments in the system declarations
+    lines = [line.strip() for line in system_declarations.split("\n")]
+    bad_chars = ' ;'
+
+    # List that will hold all the node attributes necessary for ROS Nodes in ROS Launch File
+    nodes = list()
+    nodes_seen = dict()
+    for line in lines:
+        # Check if line is commented
+        if not line.startswith("//"):
+            # To trim spaces and semicolons for objects in systems declaration
+            parts = ["".join(c for c in part if c not in bad_chars) for part in line.split("=")]
+            # To check if given line is indeed an object instantiation line
+            if(len(parts) == 2):
+                # Construct Node dictionary
+                node = {"type" : "dummy", "name" : "dummy"}
+
+                node["type"] = parts[1].split("(")[0]
+                if(node["type"] in nodes_seen):
+                    nodes_seen[node["type"]] += 1
+                else:
+                    nodes_seen[node["type"]] = 0
+                node["name"] = "{}{}".format(node["type"],nodes_seen[node["type"]])
+                nodes.append(node)
+
+
+    # Create folder to store ros launch file
+    path = "src/control/launch/"
+    try:
+        os.makedirs(path)
+    except OSError:
+        print("Creation of ROS Launch File in {0} has failed".format(path))
+    else:
+        print("Successfully Created ROS Launch Directory Structure\n Proceeding with ROS Launch File Generation...")
+
+    # Construct XML tree from nodes extracted from system declaration file
+    ros_tree = ET.Element("launch")
+    for node in nodes:
+        if nodes_seen[node["type"]] > 0:
+            ros_group = ET.SubElement(ros_tree, "group")
+            ros_group_node = ET.SubElement(ros_group, "node", attrib={"pkg":"control", "type":"{}".format(node["type"]), "name":"{}".format(node["name"]), "output":"screen", "ns":"/{}".format(node["name"])})
+            ros_node_param1 = ET.SubElement(ros_group_node, "param", attrib={"name":"namespace", "value":"/{}".format(node["name"])})
+            ros_node_param2 = ET.SubElement(ros_group_node, "param", attrib={"name":"use_sim_time", "value":"true"})
+        else:
+            ros_node = ET.SubElement(ros_tree, "node", attrib={"pkg":"control", "type":"{}".format(node["type"]), "name":"{}".format(node["name"])})
+    
+    # Dumping XML Tree String into interim ROS Launch file
+    xml_string = ET.tostring(ros_tree)
+    with open(path+"control.launch", "w") as f:
+        f.write(xml_string.decode("utf-8"))
+    
+    # Parsing string dump into lxml etree object so that
+    # we can leverage the pretty function from the lxml library (print xml with indents)
+    x = etree.parse(path+"control.launch")
+    with open(path+"control.launch", "w") as f:
+        f.write(etree.tostring(x, pretty_print=True).decode("utf-8"))
