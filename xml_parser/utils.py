@@ -97,6 +97,8 @@ def generate_ros_params(global_params):
                         # to check if the we are dealing with an array or normal variable
                         if right != processed_right:
                             left = left.split("[")[0]
+                            processed_right = processed_right[1:-1]
+                            processed_right = [int(x) for x in processed_right.split(",")]
                         else:
                             processed_right = int(processed_right)
                         yaml_dict[left] = processed_right
