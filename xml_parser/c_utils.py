@@ -1,15 +1,25 @@
 from pycparser import parse_file, c_generator, c_parser, c_ast
 from CodeGen import *
+import yaml
 
-def extract_declarations_and_functions(ast):
+def load_yaml(filepath):
+    with open(filepath) as f:
+        data = yaml.load(f, Loader=yaml.FullLoader)
+    return data
+
+def extract_data_from_ast(ast):
     template_vars = list()
     template_funcs = list()
+
+    # Loading previously constructed yaml file to check for global references
+    yaml_data = load_yaml('src/control/global_params/params.yaml')
+
     for node in ast:
         if type(node) == c_ast.Decl:
-            print(node)
+            # print(node)
             template_var = dict()
             if(type(node.type) == c_ast.TypeDecl):
-                template_var["decl_type"] = "type_decl"
+                template_var["decl"] = "type_decl"
                 template_var["name"] = node.type.declname
                 template_var["type"] = node.type.type.names[0]
                 if(node.init is not None):
@@ -17,7 +27,7 @@ def extract_declarations_and_functions(ast):
                 else:
                     template_var["value"] = "NA"
             elif(type(node.type) == c_ast.ArrayDecl):
-                template_var["decl_type"] = "array_decl"
+                template_var["decl"] = "array_decl"
                 template_var["name"] = node.type.type.declname
                 template_var["type"] = node.type.type.type.names[0]
                 try:
@@ -41,11 +51,26 @@ def extract_declarations_and_functions(ast):
                     template_var["value"] = "NA"
                     
             template_vars.append(template_var)
+
+        elif type(node) == c_ast.FuncDef:
+            # print(node)
+            template_func = dict()
+            template_func["name"] = node.decl.name
+            template_func["return_type"] = node.decl.type.type.type.names[0]
+            template_func["arguments"] = list()
+            # print("New Function")
+            try:
+                for param in node.decl.type.args.params:
+                    template_func["arguments"].append([param.type.type.names[0], param.name])
+            except:
+                # Some Exception, or function has no arguments
+                pass
+            # function body
+            template_funcs.append(template_func)
     return [template_vars, template_funcs]
 
 
-def generate_ros_base_class(template):
-    template_name = template.name
+def construct_abstract_syntax_tree(template):
     template_declarations = [line for line in template.declarations.split("\n")]
     with open("interim_base_file.c", "w") as f:
         f.write("typedef enum { false, true } bool;\n")
@@ -64,9 +89,11 @@ def generate_ros_base_class(template):
                 f.write(line + "\n")
     
     ast = parse_file("interim_base_file.c", use_cpp=True)
+    return ast
 
-    template_vars, template_funcs = extract_declarations_and_functions(ast)
 
+def generate_ros_base_class(template, template_vars, template_funcs):
+    template_name = template.name
     file_name = "{}_base_class.cpp".format(template_name)
     cpp = CppFile(file_name)
     cpp("#include <bits/stdc++.h>")
@@ -82,7 +109,7 @@ def generate_ros_base_class(template):
                 cpp("nh = ros::NodeHandle(\"~\");")
                 for var_dict in template_vars:
                     if(var_dict["value"] != "NA"):
-                        if(var_dict["decl_type"] == "array_decl"):
+                        if(var_dict["decl"] == "array_decl"):
                             temp_val = "{"
                             for idx, item in enumerate(var_dict["value"]):
                                 if(var_dict["type"] == "bool"):
