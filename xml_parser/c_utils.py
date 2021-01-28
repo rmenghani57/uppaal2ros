@@ -4,7 +4,19 @@ from CodeGen import *
 def generate_ros_base_class(template):
     template_name = template.name
     with open("interim_base_file.c", "w") as f:
-        f.writelines(template.declarations)
+        for line in template_declarations:
+            temp_line = "".join(c for c in line if c != " ")
+            if "for(" in temp_line:
+                loop_var = temp_line.split("(")[1][0]
+                loop_var_type = temp_line.split(":")[1].split("[")[0]
+
+                loop_range_line = temp_line.split("[")[1]
+                loop_range_line = loop_range_line.split("]")[0]
+                loop_start = loop_range_line.split(",")[0]
+                loop_end = loop_range_line.split(",")[1]
+                f.write("for({} {}={}; {} < {}; {}++)\n".format(loop_var_type, loop_var, loop_start, loop_var, loop_end, loop_var))
+            else:
+                f.write(line + "\n")
     
     ast = parse_file("interim_base_file.c", use_cpp=True)
     parser = c_parser.CParser()
