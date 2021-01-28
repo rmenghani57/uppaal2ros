@@ -1,22 +1,53 @@
 from pycparser import parse_file, c_generator, c_parser, c_ast
 from CodeGen import *
 import yaml
+from ast_to_json import *
+import json
 
 def load_yaml(filepath):
     with open(filepath) as f:
         data = yaml.load(f, Loader=yaml.FullLoader)
     return data
 
+def json_extract(obj, var_set, key):
+    # Recursively search for values of key in JSON tree.
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if isinstance(v, (dict, list)):
+                json_extract(v, var_set, key)
+            elif k == key:
+                var_set.add(v)
+    elif isinstance(obj, list):
+        for item in obj:
+            json_extract(item, var_set, key)
+    return var_set
+
+def extract_global_refs_helper(body_ast):
+    json_data = to_json(body_ast, sort_keys=True, indent=4)
+    json_dict = json.loads(json_data)
+    var_set = set()
+    var_set = json_extract(json_dict, var_set, 'name')
+    return var_set
+    
+
+def extract_global_refs(node, template_func):
+    # Loading previously constructed yaml file to check for global references
+    yaml_data = load_yaml('src/control/global_params/params.yaml')
+    template_func["global_refs"] = dict()
+    var_set = extract_global_refs_helper(node.body)
+    for var in var_set:
+        if var in yaml_data:
+            template_func["global_refs"][var] = [type(yaml_data[var])]
+            if isinstance(yaml_data[var], list):
+                template_func["global_refs"][var].append(type(yaml_data[var][0]))
+    return template_func
+
 def extract_data_from_ast(ast):
     template_vars = list()
     template_funcs = list()
 
-    # Loading previously constructed yaml file to check for global references
-    yaml_data = load_yaml('src/control/global_params/params.yaml')
-
     for node in ast:
         if type(node) == c_ast.Decl:
-            # print(node)
             template_var = dict()
             if(type(node.type) == c_ast.TypeDecl):
                 template_var["decl"] = "type_decl"
@@ -53,7 +84,6 @@ def extract_data_from_ast(ast):
             template_vars.append(template_var)
 
         elif type(node) == c_ast.FuncDef:
-            # print(node)
             template_func = dict()
             template_func["name"] = node.decl.name
             template_func["return_type"] = node.decl.type.type.type.names[0]
@@ -66,6 +96,7 @@ def extract_data_from_ast(ast):
                 # Some Exception, or function has no arguments
                 pass
             # function body
+            template_func = extract_global_refs(node, template_func)
             template_funcs.append(template_func)
     return [template_vars, template_funcs]
 
