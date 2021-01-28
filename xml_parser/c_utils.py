@@ -3,6 +3,7 @@ from CodeGen import *
 import yaml
 from ast_to_json import *
 import json
+import os
 
 def load_yaml(filepath):
     with open(filepath) as f:
@@ -124,8 +125,17 @@ def construct_abstract_syntax_tree(template):
 
 
 def generate_ros_base_class(template, template_vars, template_funcs):
+    
     template_name = template.name
-    file_name = "{}_base_class.cpp".format(template_name)
+    file_path = "src/control/src/base_classes/"
+    try:
+        os.makedirs(file_path, exist_ok=True)
+    except OSError:
+        print("Creation of {} Base Class in {} has failed".format(template_name, file_path))
+    else:
+        print("Successfully Created {} Base Class Directory Structure\n Proceeding with {} Base Class Generation...".format(template_name, template_name))
+
+    file_name = "{}{}_base_class.cpp".format(file_path, template_name)
     cpp = CppFile(file_name)
     cpp("#include <bits/stdc++.h>")
     cpp("#include <gnc_functions.hpp>")
@@ -136,6 +146,7 @@ def generate_ros_base_class(template, template_vars, template_funcs):
             for var_dict in template_vars:
                 cpp("{} {};".format(var_dict["type"], var_dict["name"]))
             cpp.label("public")
+            # Constructor code generation
             with cpp.block("$class_name$()"):
                 cpp("nh = ros::NodeHandle(\"~\");")
                 for var_dict in template_vars:
@@ -157,6 +168,7 @@ def generate_ros_base_class(template, template_vars, template_funcs):
                             var_dict["value"] = temp_val
                         cpp("this->{} = {};".format(var_dict["name"], var_dict["value"]))
             
+            # Function code generation
             for func in template_funcs:
                 args = "("
                 for idx, arg in enumerate(func["arguments"]):
@@ -166,8 +178,23 @@ def generate_ros_base_class(template, template_vars, template_funcs):
                 args += ")"
                 block_name = "{} {}{}".format(func["return_type"], func["name"], args)
                 with cpp.block(block_name):
-                    cpp("cout << \"Test\" << endl;")
-
+                    for global_ref in func["global_refs"]:
+                        # Global ref is not an array
+                        val = func["global_refs"][global_ref]
+                        if len(val) == 1:
+                            if issubclass(val[0], int):
+                                cpp("int {};".format(global_ref))
+                            elif issubclass(val[0], bool):
+                                cpp("bool {};".format(global_ref))
+                        elif len(val) == 2:
+                            print(type(val[1]))
+                            if issubclass(val[1], int):
+                                cpp("vector<int> {};".format(global_ref))
+                            elif issubclass(val[1], float):
+                                cpp("vector<double> {};".format(global_ref))
+                            elif issubclass(val[1], bool):
+                                cpp("vector<bool> {};".format(global_ref))
+                        cpp("nh.getParam(\"/{}\", {});".format(global_ref, global_ref))
     cpp.close()
 
 # Here 'g' is the graph object
