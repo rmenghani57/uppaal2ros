@@ -156,6 +156,17 @@ def generate_ros_base_class(template, template_vars, template_funcs):
                                     temp_val += "}"
                             var_dict["value"] = temp_val
                         cpp("this->{} = {};".format(var_dict["name"], var_dict["value"]))
+            
+            for func in template_funcs:
+                args = "("
+                for idx, arg in enumerate(func["arguments"]):
+                    args += arg[0] + " " + arg[1]
+                    if idx != len(func["arguments"]) - 1:
+                        args += ","
+                args += ")"
+                block_name = "{} {}{}".format(func["return_type"], func["name"], args)
+                with cpp.block(block_name):
+                    cpp("cout << \"Test\" << endl;")
 
     cpp.close()
 
