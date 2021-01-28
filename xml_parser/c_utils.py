@@ -4,6 +4,7 @@ from CodeGen import *
 def generate_ros_base_class(template):
     template_name = template.name
     with open("interim_base_file.c", "w") as f:
+        f.write("typedef enum { false, true } bool;\n")
         for line in template_declarations:
             temp_line = "".join(c for c in line if c != " ")
             if "for(" in temp_line:
