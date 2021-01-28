@@ -89,15 +89,25 @@ def extract_data_from_ast(ast):
             template_func["name"] = node.decl.name
             template_func["return_type"] = node.decl.type.type.type.names[0]
             template_func["arguments"] = list()
-            # print("New Function")
             try:
                 for param in node.decl.type.args.params:
                     template_func["arguments"].append([param.type.type.names[0], param.name])
             except:
                 # Some Exception, or function has no arguments
                 pass
-            # function body
+            # extract global references in function body
             template_func = extract_global_refs(node, template_func)
+            
+            # function body
+            generator = c_generator.CGenerator()
+            func_body = generator.visit(node.body)
+            func_body_lines = func_body.split("\n")
+            processed_body_lines = list()
+            for line in func_body_lines[1:-2]:
+                processed_body_lines.append(line)
+            template_func["body"] = processed_body_lines
+
+            # Append this custom function dictionary into list holding all functions inside the template
             template_funcs.append(template_func)
     return [template_vars, template_funcs]
 
@@ -121,8 +131,9 @@ def construct_abstract_syntax_tree(template):
                 f.write(line + "\n")
     
     ast = parse_file("interim_base_file.c", use_cpp=True)
+    # We don't need the intermediate c file anymore since we've already built the AST
+    os.remove("interim_base_file.c")
     return ast
-
 
 def generate_ros_base_class(template, template_vars, template_funcs):
     
@@ -187,7 +198,6 @@ def generate_ros_base_class(template, template_vars, template_funcs):
                             elif issubclass(val[0], bool):
                                 cpp("bool {};".format(global_ref))
                         elif len(val) == 2:
-                            print(type(val[1]))
                             if issubclass(val[1], int):
                                 cpp("vector<int> {};".format(global_ref))
                             elif issubclass(val[1], float):
@@ -195,6 +205,9 @@ def generate_ros_base_class(template, template_vars, template_funcs):
                             elif issubclass(val[1], bool):
                                 cpp("vector<bool> {};".format(global_ref))
                         cpp("nh.getParam(\"/{}\", {});".format(global_ref, global_ref))
+                    # printing out the function body
+                    for line in func["body"]:
+                        cpp(line)
     cpp.close()
 
 # Here 'g' is the graph object

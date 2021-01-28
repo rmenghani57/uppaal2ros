@@ -61,7 +61,7 @@ def generate_ros_params(global_params):
     # Create folder structure to store ros params file
     path = "src/control/global_params/"
     try:
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
     except OSError:
         print("Creation of ROS Global Parameters File in {0} has failed".format(path))
     else:
@@ -166,7 +166,7 @@ def generate_ros_launch(system_declarations):
     # Create folder to store ros launch file
     path = "src/control/launch/"
     try:
-        os.makedirs(path)
+        os.makedirs(path, exist_ok=True)
     except OSError:
         print("Creation of ROS Launch File in {0} has failed".format(path))
     else:
