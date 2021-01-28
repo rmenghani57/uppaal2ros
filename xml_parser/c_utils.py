@@ -3,33 +3,25 @@ from CodeGen import *
 
 def generate_ros_base_class(template):
     template_name = template.name
-    lines = [line.strip() for line in template.declarations.split("\n")]
+    with open("interim_base_file.c", "w") as f:
+        f.writelines(template.declarations)
     
-    for line in lines:
-        if not line.startswith("//"):
-            parts = line.split(" ")
-            for idx, part in enumerate(parts):
-                if(part.startswith("//")):
-                    parts = parts[:idx]
-                    break
-            # to find lines of variable initializations
-            if((parts[0] == "int" or parts[0] == "bool") and (parts[-1] == ";" or parts[-1].endswith(";"))):
-                bad_chars = ' ;'
-                parts = ["".join(c for c in part if c not in bad_chars) for part in parts]
-                variable = dict()
-                for idx, part in enumerate(parts):
-                    if(part == "int" or part == "bool"):
-                        variable["type"] = part
-                        variable["name"] = parts[idx + 1]
-                        try:
-                            variable["value"] = parts[idx + 3]
-                        except:
-                            variable["value"] = "NA"
-                template_vars.append(variable)
-            # if this is not the case, then we have encountered the end of all declarations
+    ast = parse_file("interim_base_file.c", use_cpp=True)
+    parser = c_parser.CParser()
+
+    template_vars = list()
+    for node in ast:
+        if type(node) == c_ast.Decl:
+            template_var = dict()
+            template_var["name"] = node.type.declname
+            template_var["type"] = node.type.type.names[0]
+            if(node.init is not None):
+                template_var["value"] = node.init.value
             else:
-                break
-    
+                template_var["value"] = "NA"
+            template_vars.append(template_var)
+    print(template_vars)
+
     file_name = "{}_base_class.cpp".format(template_name)
     cpp = CppFile(file_name)
     cpp("#include <bits/stdc++.h>")
