@@ -25,15 +25,36 @@ def generate_ros_base_class(template):
     template_vars = list()
     for node in ast:
         if type(node) == c_ast.Decl:
+            print(node)
             template_var = dict()
-            template_var["name"] = node.type.declname
-            template_var["type"] = node.type.type.names[0]
-            if(node.init is not None):
-                template_var["value"] = node.init.value
-            else:
-                template_var["value"] = "NA"
+            if(type(node.type) == c_ast.TypeDecl):
+                template_var["decl_type"] = "type_decl"
+                template_var["name"] = node.type.declname
+                template_var["type"] = node.type.type.names[0]
+                if(node.init is not None):
+                    template_var["value"] = node.init.value
+                else:
+                    template_var["value"] = "NA"
+            elif(type(node.type) == c_ast.ArrayDecl):
+                template_var["decl_type"] = "array_decl"
+                template_var["name"] = node.type.type.declname
+                template_var["type"] = node.type.type.type.names[0]
+                try:
+                    template_var["array_dim"] = node.type.dim.name
+                except:
+                    template_var["array_dim"] = node.type.dim.value
+                array_init = list()
+                if(node.init is not None):
+                    for item in node.init.exprs:
+                        if template_var["type"] == "int":
+                            array_init.append(item.value)
+                        else:
+                            array_init.append(item.name)
+                    template_var["value"] = array_init
+                else:
+                    template_var["value"] = "NA"
+                    
             template_vars.append(template_var)
-    print(template_vars)
 
     file_name = "{}_base_class.cpp".format(template_name)
     cpp = CppFile(file_name)
