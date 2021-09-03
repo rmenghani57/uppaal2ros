@@ -1,12 +1,16 @@
-[What is Uppaal?](#what-is-uppaal?)
+[What is Uppaal?](#what-is-uppaal)
 
-[What is ROS?](#what-is-ros-(robot-operating-system)?)
+[What is ROS?](#what-is-ros-(robot-operating-system))
 
-[What is Gazebo?](#what-is-gazebo?)
+[What is Gazebo?](#what-is-gazebo)
 
-[What is Ardupilot?](#what-is-ardupilot?)
+[What is Ardupilot?](#what-is-ardupilot)
 
 [What is Mavros?](#what-is-mavros)
+
+[What is Mavlink?](#what-is-mavlink)
+
+[What is Software In the Loop Simulation (SITL)?](#what-is-software-in-the-loop-simulation-(sitl))
 
 
 # uppaal2ros
