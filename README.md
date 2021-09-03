@@ -1,20 +1,37 @@
-[What is Uppaal?](#what-is-uppaal)
-
-[What is ROS?](#what-is-ros-robot-operating-system)
-
-[What is Gazebo?](#what-is-gazebo)
-
-[What is Ardupilot?](#what-is-ardupilot)
-
-[What is Mavros?](#what-is-mavros)
-
-[What is Mavlink?](#what-is-mavlink)
-
-[What is Software In the Loop Simulation (SITL)?](#what-is-software-in-the-loop-simulation-sitl)
-
 
 # uppaal2ros
 A translator to accelerate development when going from the formal verification software UPPAAL to the robotics simulation trinity of ROS, Gazebo and ArduPilot.
+
+# Table of Contents
+1. [What is Uppaal?](#what-is-uppaal)
+
+2. [What is ROS?](#what-is-ros-robot-operating-system)
+
+3. [What is Gazebo?](#what-is-gazebo)
+
+4. [What is Ardupilot?](#what-is-ardupilot)
+
+5. [What is Mavros?](#what-is-mavros)
+
+6. [What is Mavlink?](#what-is-mavlink)
+
+7. [What is Software In the Loop Simulation (SITL)?](#what-is-software-in-the-loop-simulation-sitl)
+
+8. [Simulation Environment Installation Guide](#simulation-environment-installation-guide)
+
+    a. [ROS Installation](#ros-installation)
+        1. [Setup the sources.list](#setup-the-sources.list)
+        2. [Setup the keys](#setup-the-keys)
+        3. [Installation](#installation)
+        4. [Other](#other)
+    b. [MAVROS Installation](#mavros-installation)
+    c. [Ardupilot Tools Installation](#ardupilot-tools-installation)
+    d. [Gazebo Installation](#gazebo-installation)
+    e. [For the SITL Simulator](#for-the-sitl-simulator)
+    f. [Connecting Ardupilot with ROS](#connecting-ardupilot-with-ros)
+    g. [Troubleshooting](#troubleshooting)
+    h. [Initialization of the Catkin Workspace](#initialization-of-the-catkin-workspace)
+9. [Running the Simulation](#running-the-simulation)
 
 ## What is Uppaal?
 Uppaal is an integrated tool environment for modeling, validation and verification of real-time systems modeled as networks of timed automata, extended with data types (bounded integers, arrays, etc.).
@@ -185,7 +202,7 @@ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
 update global variables
 ```
-source ~/.bashrc
+source ~/.bashrcRu
 ```
 Clone the IQ Simulation ROS Package
 ```
@@ -206,7 +223,7 @@ update global variables
 ```
 source ~/.bashrc
 ```
-### Running the Simulation
+## Running the Simulation
 Launch the world with the three drones spawned:
 ```
 roslaunch iq_sim multi_drone.launch
