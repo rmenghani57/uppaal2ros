@@ -21,7 +21,7 @@ A translator to accelerate development when going from the formal verification s
 
     a. [ROS Installation](#ros-installation)    
         
-    1. [Setup the sources.list](#setup-the-sources.list)
+    1. [Setup the sources.list](#1-setup-the-sources.list)
     
     2. [Setup the keys](#setup-the-keys)
     
