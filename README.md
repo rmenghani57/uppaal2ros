@@ -16,3 +16,204 @@ Gazebo is a well-designed open-source robotics simulator that makes it possible 
 
 ## What is Ardupilot?
 
+
+
+
+## Installation Of Simulation Environment
+### Installation of ROS (Robot Operating System)
+#### 1. Setup the sources.list
+```
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+```
+#### 2. Setup the keys
+```
+sudo apt install curl # if you haven't already installed curl
+curl -s https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+```
+#### 3. Installation
+```
+sudo apt insall ros-neotic-desktop-full
+```
+#### 4. Other
+You can always install a specific package found @ https://index.ros.org/packages/page/1/time/#noetic directly using:
+```
+sudo apt install ros-noetic-PACKAGE
+```
+### Installation of MAVROS
+ROS repository has binary packages for Ubuntu x86, amd64 (x86_64) and armhf (ARMv7). Kinetic also support Debian Jessie amd64 and arm64 (ARMv8).
+
+Just use apt-get for installation:
+```
+sudo apt-get install ros-noetic-mavros ros-noetic-mavros-extras
+```
+Then install GeographicLib datasets by running the *install_geographiclib_datasets.sh* script:
+```
+wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
+sudo chmod +x ./install_geographiclib_datasets.sh
+```
+### Installation of Ardupilot tools
+As recommended by Ardupilot (https://ardupilot.org/dev/docs/ros-install.html#installing-mavros)
+
+For ease of use on a desktop computer, please also install RQT:
+```
+sudo apt-get install ros-noetic-rqt ros-noetic-rqt-common-plugins ros-noetic-rqt-robot-plugins
+```
+We recommend using caktin_tools instead of the default catkin_make as it is more powerful:
+```
+sudo apt-get install python3-catkin-tools
+```
+### Installation of Gazebo
+We will be using a standard version of ArduPilot but a custom plugin for Gazebo, until the gazebo plugin gets merged into Gazebo-master.
+
+This plugin can be used with or without ROS integration.
+```
+sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+
+wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+
+sudo apt update
+
+sudo apt install gazebo9 libgazebo9-dev
+```
+The first time gazebo is executed requires the download of some models and it could take some time, so please be patient. Let’s give a try.
+```
+gazebo --verbose
+```
+It should open an empty world.
+### For the STL Simulator
+First, fork the ardupilot repo, then clone. https://ardupilot.org/dev/docs/building-setup-linux.html
+
+Then install the required packages using:
+```
+Tools/environment_install/install-prereqs-ubuntu.sh -y
+```
+Reload the path (log-out and log-in to make permanent):
+```
+. ~/.profile
+```
+In a terminal window start Gazebo:
+```
+gazebo --verbose ~/ardupilot_gazebo/worlds/iris_arducopter_demo.world
+```
+In another terminal window, enter the ArduCopter directory and start the SITL simulation:
+```
+cd ~/ardupilot/ArduCopter sim_vehicle.py -f gazebo-iris -D --console --map
+```
+
+### Connecting Ardupilot with ROS
+Launch an SITL instance:
+```
+cd ~/ardupilot/ArduCopter sim_vehicle.py -f gazebo-iris -D --console --map
+```
+The next step is to create a new directory for a launch file. In a new terminal, we run these:
+```
+cd ardupilot
+mkdir launch
+cd launch
+```
+We then copy mavros default launch file for ardupilot and then open to edit it:
+```
+roscp mavros apm.launch apm.launch
+gedit apm.launch
+```
+To connect to SITL we modify the first line to
+```
+<arg name="fcu_url" default="udp://127.0.0.1:14551@14555" />
+```
+
+We save the file and launch it with:
+```
+roslaunch apm.launch
+```
+
+The connection is now complete.
+
+### Troubleshooting
+Since GeographicLib requires certain datasets (mainly the geoid dataset) so to fulfill certain calculations, these may be needed to be installed manually by the user. If you run into GeographicLib error, run these:
+```
+wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
+chmod +x install_geographiclib_datasets.sh
+
+sudo ./install_geographiclib_datasets.sh
+```
+
+Additionally, we can use RQT to see all the topics that mavros has to create from ardupilot information. In a new terminal, type:
+```
+rqt
+```
+We can now see all the topics that mavros has to create from ardupilot information.
+
+### Initialization of the Catkin Workspace
+We use catkin build instead of catkin_make. Please install the following:
+```
+sudo apt-get install python-wstool python-rosinstall-generator python-catkin-tools
+```
+Then, initialize the catkin workspace:
+```
+mkdir -p ~/catkin_ws/src
+cd ~/catkin_ws
+catkin init
+```
+Add a line to end of ~/.bashrc by running the following command:
+```
+echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc
+```
+update global variables
+```
+source ~/.bashrc
+```
+Clone the IQ Simulation ROS Package
+```
+cd ~/catkin_ws/src
+git clone https://github.com/Intelligent-Quads/iq_sim.git
+```
+Run the following to tell gazebo where to look for the iq models
+```
+echo "GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:$HOME/catkin_ws/src/iq_sim/models" >> ~/.bashrc
+```
+Build instructions
+Inside catkin_ws, run catkin build:
+```
+cd ~/catkin_ws
+catkin build
+```
+update global variables
+```
+source ~/.bashrc
+```
+### Running the Simulation
+Launch the world with the three drones spawned:
+```
+roslaunch iq_sim multi_drone.launch
+```
+Launch the three SITL instances, one for each drone
+
+* New Terminal
+```
+cd ~/ardupilot/ArduCopter sim_vehicle.py -v ArduCopter -f gazebo-drone1 --console -I0
+```
+* New Terminal
+```
+cd ~/ardupilot/ArduCopter sim_vehicle.py -v ArduCopter -f gazebo-drone2 --console -I1
+```
+* New Terminal
+```
+cd ~/ardupilot/ArduCopter sim_vehicle.py -v ArduCopter -f gazebo-drone3 --console -I2
+```
+Run the same commands shown above but when running the SITL instances do:
+```
+sim_vehicle.py -v ArduCopter -f gazebo-drone1 -I0 --out=tcpin:0.0.0.0:8000
+sim_vehicle.py -v ArduCopter -f gazebo-drone2 -I1 --out=tcpin:0.0.0.0:8100
+sim_vehicle.py -v ArduCopter -f gazebo-drone3 -I2 --out=tcpin:0.0.0.0:8200
+sim_vehicle.py -v ArduCopter -f gazebo-drone4 -I3 --out=tcpin:0.0.0.0:8300 
+```
+For ROS Connection
+* New Terminal
+```
+cd ~/ardupilot_ws roslaunch iq_sim multi-apm.launch
+```
+Run the script:
+* New Terminal
+```
+cd ~/ardupilot_ws roslaunch iq_gnc multi_square_sol.launch
+```
