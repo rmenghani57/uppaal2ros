@@ -15,11 +15,22 @@ ROS provides libraries, tools, hardware abstraction, device drivers, visualizers
 Gazebo is a well-designed open-source robotics simulator that makes it possible to rapidly test algorithms, design robots, perform regression testing, and train AI system using realistic scenarios. It offers the ability to accurately and efficiently simulate populations of robots in complex indoor and outdoor environments.
 
 ## What is Ardupilot?
-ArduPilot is a trusted, versatile, and open source autopilot system that supports vehicle types inculuding multi-copters, traditional helicopters, fixed wing aircraft, boats, submarines, rovers and more. The specific project within Ardupilot used in this research effort is Arducopter, which is the autopilot system for multicopters, helicopters, and other rotor vehicles. As part of the wider ArduPilot software platform, Arducopter works seamlessly with a variety of Ground Control Station programs that are used to setup the vehicle, monitor the vehicle’s flight in real-time and perform powerful mission planning activities. 
+ArduPilot is a trusted, versatile, and open source autopilot system that supports vehicle types inculuding multi-copters, traditional helicopters, fixed wing aircraft, boats, submarines, rovers and more. The specific project within Ardupilot used in this research effort is Arducopter, which is the autopilot system for multicopters, helicopters, and other rotor vehicles. As part of the wider ArduPilot software platform, Arducopter works seamlessly with a variety of Ground Control Station programs that are used to setup the vehicle, monitor the vehicle’s flight in real-time and perform powerful mission planning activities.
 
+## What is MAVROS?
+MAVROS is a ROS “node” that can convert between ROS topics and MAVLink messages allowing ArduPilotvehicles to communicate with ROS. The MAVROS code can be found here.
+A node is a process that performs computation. Nodes are combined together into a graph and communicatewith one another using streaming topics, RPC services, and the Parameter Server. These nodes are meant tooperate at a fine-grained scale; a robot control system will usually comprise many nodes. For example, one nodecontrols a laser range-finder, one Node controls the robot's wheel motors, one node performs localization, onenode performs path planning, one node provides a graphical view of the system, and so on.
 
-## Installation Of Simulation Environment
-### Installation of ROS (Robot Operating System)
+## What is MAVLink?
+MAVLink is a very lightweight messaging protocol for communicating with drones (and between onboard dronecomponents). It follows a modern hybrid publish-subscribe and point-to-point design pattern: data streams are sent /published as topics while configuration sub-protocols such as the mission protocol or parameter protocol arepoint-to-point with retransmission. Messages are defined within XML files.
+
+## What is Software In The Loop Simulation (SITL)?
+SITL allows you to run ArduPilot on your PC directly, without any special hardware. It takes advantage of the fact that ArduPilot is a portable autopilot that can run on a very wide variety of platforms. Your PC is just another platform that ArduPilot can be built and run on.
+When running in SITL sensor data comes from a flight dynamics model in a flight simulator. ArduPilot has awide range of vehicle simulators built in, and can interface to several external simulators like Gazebo. This allows ArduPilot to be tested on a very wide variety of vehicle types. 
+A big advantage of ArduPilot on SITL is it gives you access to the full range of development tools available todesktop C++ development, such as interactive debuggers, static analyzers and dynamic analysis tools. Thismakes developing and testing new features in ArduPilot much simpler.
+
+## Simulation Environment Installation
+### ROS Installation (Robot Operating System)
 #### 1. Setup the sources.list
 ```
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
@@ -38,7 +49,7 @@ You can always install a specific package found @ https://index.ros.org/packages
 ```
 sudo apt install ros-noetic-PACKAGE
 ```
-### Installation of MAVROS
+### MAVROS Installation
 ROS repository has binary packages for Ubuntu x86, amd64 (x86_64) and armhf (ARMv7).
 
 Just use apt-get for installation:
@@ -50,7 +61,7 @@ Then install GeographicLib datasets by running the *install_geographiclib_datase
 wget https://raw.githubusercontent.com/mavlink/mavros/master/mavros/scripts/install_geographiclib_datasets.sh
 sudo chmod +x ./install_geographiclib_datasets.sh
 ```
-### Installation of Ardupilot tools
+### Ardupilot Tools Installation
 As recommended by Ardupilot (https://ardupilot.org/dev/docs/ros-install.html#installing-mavros)
 
 For ease of use on a desktop computer, please also install RQT:
@@ -61,7 +72,7 @@ We recommend using caktin_tools instead of the default catkin_make as it is more
 ```
 sudo apt-get install python3-catkin-tools
 ```
-### Installation of Gazebo
+### Gazebo Installation
 We will be using a standard version of ArduPilot but a custom plugin for Gazebo, until the gazebo plugin gets merged into Gazebo-master.
 
 This plugin can be used with or without ROS integration.
