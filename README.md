@@ -9,7 +9,7 @@ The use of Uppaal is appropriate for systems that can be modeled as a collection
 
 ## What is ROS (Robot Operating System)?
 The Robot Operating System (ROS) is a flexible framework for writing robot software. It is a collection of tools,libraries, and conventions that aim to simplify the task of creating complex and robust robot behavior across awide variety of robotic platforms.
-ROS provides libraries, tools, hardware abstraction, device drivers, visualizers, message-passing, packagemanagement, and more to help software developers create robot applications. In the future we expect ROS willbe replaced by ROS2.
+ROS provides libraries, tools, hardware abstraction, device drivers, visualizers, message-passing, packagemanagement, and more to help software developers create robot applications. In the future we expect ROS will be replaced by ROS2.
 
 ## What is Gazebo?
 Gazebo is a well-designed open-source robotics simulator that makes it possible to rapidly test algorithms, design robots, perform regression testing, and train AI system using realistic scenarios. It offers the ability to accurately and efficiently simulate populations of robots in complex indoor and outdoor environments.
@@ -40,7 +40,7 @@ You can always install a specific package found @ https://index.ros.org/packages
 sudo apt install ros-noetic-PACKAGE
 ```
 ### Installation of MAVROS
-ROS repository has binary packages for Ubuntu x86, amd64 (x86_64) and armhf (ARMv7). Kinetic also support Debian Jessie amd64 and arm64 (ARMv8).
+ROS repository has binary packages for Ubuntu x86, amd64 (x86_64) and armhf (ARMv7).
 
 Just use apt-get for installation:
 ```
