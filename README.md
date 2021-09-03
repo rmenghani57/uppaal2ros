@@ -19,18 +19,30 @@ A translator to accelerate development when going from the formal verification s
 
 8. [Simulation Environment Installation Guide](#simulation-environment-installation-guide)
 
-    a. [ROS Installation](#ros-installation)
-        1. [Setup the sources.list](#setup-the-sources.list)
-        2. [Setup the keys](#setup-the-keys)
-        3. [Installation](#installation)
-        4. [Other](#other)
+    a. [ROS Installation](#ros-installation)    
+        
+    1. [Setup the sources.list](#setup-the-sources.list)
+    
+    2. [Setup the keys](#setup-the-keys)
+    
+    3. [Installation](#installation)
+    
+    4. [Other](#other)
+
     b. [MAVROS Installation](#mavros-installation)
+    
     c. [Ardupilot Tools Installation](#ardupilot-tools-installation)
+    
     d. [Gazebo Installation](#gazebo-installation)
+    
     e. [For the SITL Simulator](#for-the-sitl-simulator)
+    
     f. [Connecting Ardupilot with ROS](#connecting-ardupilot-with-ros)
+    
     g. [Troubleshooting](#troubleshooting)
+    
     h. [Initialization of the Catkin Workspace](#initialization-of-the-catkin-workspace)
+
 9. [Running the Simulation](#running-the-simulation)
 
 ## What is Uppaal?
