@@ -79,7 +79,7 @@ The first time gazebo is executed requires the download of some models and it co
 gazebo --verbose
 ```
 It should open an empty world.
-### For the STL Simulator
+### For the SITL Simulator
 First, fork the ardupilot repo, then clone. https://ardupilot.org/dev/docs/building-setup-linux.html
 
 Then install the required packages using:
