@@ -15,8 +15,7 @@ ROS provides libraries, tools, hardware abstraction, device drivers, visualizers
 Gazebo is a well-designed open-source robotics simulator that makes it possible to rapidly test algorithms, design robots, perform regression testing, and train AI system using realistic scenarios. It offers the ability to accurately and efficiently simulate populations of robots in complex indoor and outdoor environments.
 
 ## What is Ardupilot?
-
-
+ArduPilot is a trusted, versatile, and open source autopilot system that supports vehicle types inculuding multi-copters, traditional helicopters, fixed wing aircraft, boats, submarines, rovers and more. The specific project within Ardupilot used in this research effort is Arducopter, which is the autopilot system for multicopters, helicopters, and other rotor vehicles. As part of the wider ArduPilot software platform, Arducopter works seamlessly with a variety of Ground Control Station programs that are used to setup the vehicle, monitor the vehicle’s flight in real-time and perform powerful mission planning activities. 
 
 
 ## Installation Of Simulation Environment
