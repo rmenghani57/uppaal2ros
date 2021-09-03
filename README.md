@@ -6,7 +6,7 @@ Uppaal is an integrated tool environment for modeling, validation and verificati
 The tool is developed in collaboration between the Department of Information Technology at Uppsala University, Sweden and the Department of Computer Science at Aalborg University in Denmark.
 The use of Uppaal is appropriate for systems that can be modeled as a collection of non-deterministic processes with finite control structure and real-valued clocks, communicating through channels or shared variables. The software consists of three main parts: a description language, a simulator and a model-checker.
 
-
+[## What is ROS?] (###ROS-Installation)
 ## What is ROS (Robot Operating System)?
 The Robot Operating System (ROS) is a flexible framework for writing robot software. It is a collection of tools,libraries, and conventions that aim to simplify the task of creating complex and robust robot behavior across awide variety of robotic platforms.
 ROS provides libraries, tools, hardware abstraction, device drivers, visualizers, message-passing, packagemanagement, and more to help software developers create robot applications. In the future we expect ROS will be replaced by ROS2.
@@ -29,8 +29,8 @@ SITL allows you to run ArduPilot on your PC directly, without any special hardwa
 When running in SITL sensor data comes from a flight dynamics model in a flight simulator. ArduPilot has awide range of vehicle simulators built in, and can interface to several external simulators like Gazebo. This allows ArduPilot to be tested on a very wide variety of vehicle types. 
 A big advantage of ArduPilot on SITL is it gives you access to the full range of development tools available todesktop C++ development, such as interactive debuggers, static analyzers and dynamic analysis tools. Thismakes developing and testing new features in ArduPilot much simpler.
 
-## Simulation Environment Installation
-### ROS Installation (Robot Operating System)
+# Simulation Environment Installation Guide
+### ROS Installation
 #### 1. Setup the sources.list
 ```
 sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
