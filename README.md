@@ -235,7 +235,7 @@ update global variables
 ```
 source ~/.bashrc
 ```
-## Running the Simulation
+# Running the Simulation
 Launch the world with the three drones spawned:
 ```
 roslaunch iq_sim multi_drone.launch
