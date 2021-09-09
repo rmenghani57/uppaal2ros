@@ -1,6 +1,6 @@
 
 # uppaal2ros
-A translator to accelerate development when going from the formal verification software UPPAAL to the robotics simulation trinity of ROS, Gazebo and ArduPilot.
+Formal verification ensures assurance to the modeling and design of robotic applications in executing autonomous operations. However, transitioning from formally validated models created in formal environments/software such as UPPAAL to simulation software such as Robot Operating System (ROS), Gazebo and ArduPilot takes effort and is prone to human errors. Therefore, we present a translator to accelerate development when going from the formal verification software UPPAAL to the robotics simulation trinity of ROS, Gazebo and ArduPilot. This work has been submitted for publication in IEEE Systems Journal and is under review.
 
 # Table of Contents
 1. [What is Uppaal?](#what-is-uppaal)
