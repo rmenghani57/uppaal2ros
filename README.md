@@ -19,21 +19,21 @@ Formal verification ensures assurance to the modeling and design of robotic appl
 
 8. [Simulation Environment Installation Guide](#simulation-environment-installation-guide)
 
-        a. [ROS Installation](#ros-installation)    
+      a. [ROS Installation](#ros-installation)    
         
-        b. [MAVROS Installation](#mavros-installation)
+      b. [MAVROS Installation](#mavros-installation)
     
-        c. [Ardupilot Tools Installation](#ardupilot-tools-installation)
+      c. [Ardupilot Tools Installation](#ardupilot-tools-installation)
     
-        d. [Gazebo Installation](#gazebo-installation)
+      d. [Gazebo Installation](#gazebo-installation)
     
-        e. [For the SITL Simulator](#for-the-sitl-simulator)
+      e. [For the SITL Simulator](#for-the-sitl-simulator)
     
-        f. [Connecting Ardupilot with ROS](#connecting-ardupilot-with-ros)
+      f. [Connecting Ardupilot with ROS](#connecting-ardupilot-with-ros)
     
-        g. [Troubleshooting](#troubleshooting)
+      g. [Troubleshooting](#troubleshooting)
     
-        h. [Initialization of the Catkin Workspace](#initialization-of-the-catkin-workspace)
+      h. [Initialization of the Catkin Workspace](#initialization-of-the-catkin-workspace)
 
 9. [Running the Simulation](#running-the-simulation)
 
