@@ -105,7 +105,7 @@ int main(int argc, char** argv)
     nh.setParam("/drone_number", my_number + 1);
     got_my_number = true;
     Drone* drone_instance = new Drone(my_number);
-    
+
     // Has the same effect as incrementing drone counter as defined in the drone template.
     nh.setParam("/drone_number_counter", my_number + 1);
 
