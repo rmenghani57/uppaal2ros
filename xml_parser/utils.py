@@ -25,7 +25,7 @@ def extract_templates(filename):
                 pass
             # Adding the custom Node object into the custom Template object
             template.add_node(node_id, node_name, is_committed)
-            if node_name == "Start" or node_name == "Idle":                                                # MODIFICATION for drone IDLE state in template
+            if node_name == "Start":
                 template.start_id = node_id
 
         # Extracting all edges inside a template
@@ -83,7 +83,6 @@ def generate_ros_params(global_params):
             # Remove semi-colons
             processed_parts[-1] = processed_parts[-1][:-1]
 
-            # channels are not translated
             if "chan" in processed_parts:
                 yaml_dict[processed_parts[-1]] = 0
             
@@ -120,9 +119,9 @@ def generate_ros_params(global_params):
                             length = int(part.split("[")[1].split("]")[0])
                         
                         if part_type == "int":
-                            yaml_dict[part_name] = [0 for x in range(length)]    #this is filling int array with zeros
+                            yaml_dict[part_name] = [0 for x in range(length)]
                         elif part_type == "bool":
-                            yaml_dict[part_name] = [False for x in range(length)]  # this fils bool arrays with false 
+                            yaml_dict[part_name] = [False for x in range(length)]
 
                 # This leaves us with the last case of an uninitialized variable
                 if(not isArray):

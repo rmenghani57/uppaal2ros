@@ -2,9 +2,9 @@ import utils
 import c_utils
 
 if __name__ == '__main__':
-    templates = utils.extract_templates('xml_parser/Swarm_consensus_final.xml')
-    global_params = utils.extract_text('xml_parser/Swarm_consensus_final.xml', 'declaration')
-    system_declarations = utils.extract_text('xml_parser/Swarm_consensus_final.xml', 'system')
+    templates = utils.extract_templates('behavioral_model.xml')
+    global_params = utils.extract_text('behavioral_model.xml', 'declaration')
+    system_declarations = utils.extract_text('behavioral_model.xml', 'system')
  
     # Code Generation for ROS Global Params File
     utils.generate_ros_params(global_params)
